@@ -4,6 +4,7 @@ Hack an Amazon Dash Button to turn your Phillips Hue bulbs into an alert system.
 ## How to install
 Clone this repo
 Run `npm install` in the root of the repo
+Follow instructions below for both dash button and hue configuration
 
 ## Setting Up Amazon Dash Button
 Get total control over any Dash Button by following the instructions here: 
@@ -29,3 +30,6 @@ Enter your username that you obtained on line 24 of `app.js`
 ## Bringing it Together
 The most important steps are marked above as critical. 
 If you get all of this information and enter it into `app.js` before running, you should be all set.
+
+Finally, you need to run as super user.
+`sudo npm start`
