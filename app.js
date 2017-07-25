@@ -6,7 +6,7 @@ var lightState = hue.lightState;
 
 // Dash Button Hack
 var dash_button = require('node-dash-button');
-var dash = dash_button('44:65:0d:eb:2b:cb', null, 1000, 'all');
+var dash = dash_button('DEVICE MAC HERE', null, 1000, 'all');
 
 // Cron jobs
 var cron = require('node-cron');
@@ -20,8 +20,8 @@ var displayBridges = function(bridge) {
 };
 
 // API Configuration
-var host = "192.168.1.2",
-	username = "VfdIggqIZncIfPviMtu43mszKZTRG2fsk8jZkfyT",
+var host = "DEVICE IP HERE",
+	username = "USERNAME HERE",
 	api,
 	state = lightState.create()
 	
