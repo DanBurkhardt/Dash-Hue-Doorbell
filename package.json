@@ -1,0 +1,19 @@
+{
+  "name": "doorbell",
+  "version": "1.0.0",
+  "description": "Node application for enabling interaction between Amazon dash button and Phillips Hue lighting systems and other APIs upon pressing when using as a doorbell",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "DEBUG=app.js node --debug app.js"
+  },
+  "author": "Daniel Burkhardt",
+  "license": "MIT",
+  "dependencies": {
+    "debug": "^2.6.8",
+    "express": "^4.15.3",
+    "node-cron": "^1.2.0",
+    "node-dash-button": "^0.6.1",
+    "node-hue-api": "^2.4.2"
+  }
+}
