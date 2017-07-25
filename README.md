@@ -1,5 +1,5 @@
 # Dash-Hue-Doorbell
-Hack an Amazon Dash Button to turn your Phillips Hue bulbs into an alert system.
+Hack an Amazon Dash Button to turn your Phillips Hue bulbs into an effective doorbell alert system for your whole home, even when you are out of earshot of the door.
 
 ## How to install
 Clone this repo
