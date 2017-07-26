@@ -3,8 +3,13 @@ var fs = require('fs')
 var localKeyPath = "../../Desktop/keys.json"
 var keys
 
+
 // Application Debugging
 var debug = require('debug')('app.js')
+
+// Dash Button Hack
+var dash_button = require('node-dash-button');
+var dash = dash_button('DEVICE MAC HERE', null, 1000, 'all');
 
 // Read keyfile
 fs.readFile(localKeyPath, handle)// Format your keyfile however you want
@@ -18,8 +23,14 @@ function handle(err, data) {
 	launchApplication()
 }
 
+
 function launchApplication() {	
 	debug("Application launched..")
+	// API Configuration
+	var host = "DEVICE IP HERE",
+	username = "USERNAME HERE",
+	api,
+	state = lightState.create()
 	
 	// Hue API things
 	var hue = require("node-hue-api");
@@ -145,4 +156,5 @@ function launchApplication() {
 			});
 		}
 	}
+
 }// End launchApplication()
