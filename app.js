@@ -3,7 +3,6 @@ var fs = require('fs')
 var localKeyPath = "../../Desktop/keys.json"
 var keys
 
-
 // Application Debugging
 var debug = require('debug')('app.js')
 
@@ -26,11 +25,6 @@ function handle(err, data) {
 
 function launchApplication() {	
 	debug("Application launched..")
-	// API Configuration
-	var host = "DEVICE IP HERE",
-	username = "USERNAME HERE",
-	api,
-	state = lightState.create()
 	
 	// Hue API things
 	var hue = require("node-hue-api");

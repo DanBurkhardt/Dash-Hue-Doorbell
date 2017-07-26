@@ -8,28 +8,37 @@ Video I posted about it to Facebook: https://www.facebook.com/nomdannom/videos/1
 ## How to install
 Clone this repo
 Run `npm install` in the root of the repo
-Follow instructions below for both dash button and hue configuration
+Create a file called `keys.json` and put it somewhere you want to access in the application
+Replace the path for the `localKeyPath` variable with wherever you placed this keyfile
 
-## Setting Up Amazon Dash Button
+Follow instructions below for populating the keyfile with your credentials from Hue, Dash and Twilio
+
+
+## Gettin Amazon Dash Button Info
 Get total control over any Dash Button by following the instructions here: 
 https://www.npmjs.com/package/node-dash-button
+Follow this until you get the IP and MAC address of your button
 
 ### Critical Step
-Once you get your device MAC address, enter it on line 9 of `app.js`
+Once you get your device MAC address place it in your keyfile
+Once you get your device IP address, place it in your keyfile
 
 ## Setting Up Phillips Hue
 This application uses a third party API for Phillips Hue. 
-Follow all instructions here: https://github.com/peter-murray/node-hue-api
+https://github.com/peter-murray/node-hue-api
+Follow these instructions until you have a user account created and your REST API access is functional
 
-### Tips: 
 You will need to register a user with your Hue bridge in order to access the API.
 Follow the instructions for doing that here: https://developers.meethue.com/documentation/getting-started
 
-Once you get access to the bridge via this user, jump back over to `app.js`
+Once you have a user name, add it to your keyfile 
+
+## Setting up Twilio SMS
+Signup for an account at Twilio.com
+Add your `accountSid` and `authToken` to your keyfile.
 
 ### Critical Steps
-Enter your bridge's IP address on line 23 of `app.js`
-Enter your username that you obtained on line 24 of `app.js`
+Look for all `keys` variables referenced in `app.js` and replace each with the correct key from your keyfile.
 
 ## Bringing it Together
 The most important steps are marked above as critical. 
