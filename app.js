@@ -1,106 +1,148 @@
-// Hue API things
-var hue = require("node-hue-api");
-var HueApi = require("node-hue-api").HueApi;
+// Read keys from local keyfile
+var fs = require('fs')
+var localKeyPath = "../../Desktop/keys.json"
+var keys
+
+// Application Debugging
 var debug = require('debug')('app.js')
-var lightState = hue.lightState;
 
-// Dash Button Hack
-var dash_button = require('node-dash-button');
-var dash = dash_button('44:65:0d:eb:2b:cb', null, 1000, 'all');
+// Read keyfile
+fs.readFile(localKeyPath, handle)// Format your keyfile however you want
 
-// Cron jobs
-var cron = require('node-cron');
+// Callback for keyfile
+function handle(err, data) {
+	if (err) throw err
+	keys = JSON.parse(data)
+	debug("Read local keyfile into memory..")
+	// Launch after reading the keys from local dir
+	launchApplication()
+}
 
-//**********************
-// Hue API Configuration
-//**********************
-// Display bridges
-var displayBridges = function(bridge) {
-	console.log("Hue Bridges Found: " + JSON.stringify(bridge));
-};
-
-// API Configuration
-var host = "192.168.1.2",
-	username = "VfdIggqIZncIfPviMtu43mszKZTRG2fsk8jZkfyT",
-	api,
-	state = lightState.create()
+function launchApplication() {	
+	debug("Application launched..")
 	
-api = new HueApi(host, username);
+	// Hue API things
+	var hue = require("node-hue-api");
+	var HueApi = require("node-hue-api").HueApi;
+	var lightState = hue.lightState;
 
-// Convenince Print Method
-var displayResult = function(result) {
-	console.log(JSON.stringify(result, null, 2));
-};
+	// Dash Button Hack
+	var dash_button = require('node-dash-button');
+	var dash = dash_button(keys.dashButtonMAC, null, 1000, 'all');
 
-var lightArray
-api.lights(function(err, lights) {
-	if (err) throw err;
-	lightArray = lights.lights
-	debug("Registering array from bridge");
-	//displayResult(lights);// Uncomment to see raw light object array
-});
+	// Twilio Client
+	//require the Twilio module and create a REST client
+	var twilioClient = require('twilio')(keys.twilio.accountSID, keys.twilio.token); 
 
-//**************************
-// Dash Button Configuration
-//**************************
-dash.on("detected", function (){
-	console.log("dash button pressed");
-	triggerDoorBell()
-});
+	// Cron jobs
+	var cron = require('node-cron');
 
-// Main trigger function upon dash button press detection
-function triggerDoorBell(){
-	debug("trigger door bell");
+	//**********************
+	// Hue API Configuration
+	//**********************
+	var host = keys.hue.ipAddress,
+		username = keys.hue.username,
+		api,
+		state = lightState.create()
 	
-	// Tracking vars
-	var executionTimes = 0
-	var triggered = false
-	
-	// Cron job to dispatch on/off tasks every second
-	var task = cron.schedule('* * * * * *', function(){
-		debug("cron job fired");
-		if(triggered == false){
-			turnOffAllLights()
-			triggered = true
-		}else{
-			turnOnAllLights()
-			// Reset & increment vars
-			triggered = false
-			executionTimes++
-			
-			// Stop executing after 3 times 
-			if(executionTimes == 3){
-				executionTimes = 0
-				task.stop()
-				return
-			}
+	api = new HueApi(host, username);
+
+	var lightArray
+	api.lights(function(err, lights) {
+		if (err) throw err;
+		lightArray = lights.lights
+		debug("Obtained list of available Hue lights..");
+		debug("Standing by for doorbell / dash button activation..")
+		//debug(JSON.stringify(lights));// Uncomment to see raw light object array
+	});
+
+	//**************************
+	// Dash Button Configuration
+	//**************************
+	var lastTimePressed = 0
+	dash.on("detected", function (){
+		/* 
+		/ Sometimes the Dash Button makes multiple calls in short succession.
+		/ Here I build a .5 second buffer between allowing excution to ensure
+		/ it only fires on the very first of the calls.
+		*/ 
+		lastTimePressed = (new Date).getTime()
+		if (((new Date).getTime() - lastTimePressed) < 500){
+			debug("Dash button press detected..");
+			triggerDoorBell()	
 		}
-	}, true);
-}
+	});
 
+	// Main trigger function upon dash button press detection
+	function triggerDoorBell(){
+		debug("Doorbell function triggered..");
+	
+		// Tracking vars
+		var executionTimes = 0
+		var triggered = false
+	
+		// Send a text alert
+		sendSMS()
+	
+		// Cron job to dispatch on/off tasks every second
+		var task = cron.schedule('* * * * * *', function(){
+			debug("Cron job for light switching fired..")
+			if(triggered == false){
+				turnOffAllLights()
+				triggered = true
+			}else{
+				turnOnAllLights()
+				// Reset & increment vars
+				triggered = false
+				executionTimes++
+			
+				// Stop executing after 3 times 
+				if(executionTimes == 3){
+					executionTimes = 0
+					task.stop()
+					debug("Executed three times, cron job stopped..")
+					debug("Application returning to background state.\n\n")
+					return
+				}
+			}
+		}, true);
+	}
 
-// Turn off each light in the light array
-function turnOffAllLights(){
-	debug("turn off all lights");
-	for(var i=0; i < lightArray.length; i++){
-		var lightID = lightArray[i].id
-		console.log(lightID)
-		api.setLightState(lightID, state.off(), function(err, result) {
-			if (err) throw err;
-			displayResult(result);
+	// Send Text Message
+	function sendSMS(){
+		debug("Sending Twilio sms message.."); 
+		twilioClient.messages.create({ 
+			to: "2677096051", 
+			from: "2156080709", 
+			body: "Knock Knock! Someone is at the door right now!",   
+		}, function(err, message) { 
+			if(err){
+				debug("Twilio Message Error: "+err)	
+			}else{
+				debug("Twilio sms message sent successfully..")
+			}
 		});
 	}
-}
 
-// Turn on each light in the light array
-function turnOnAllLights(){
-	debug("turn on all lights");
-	for(var i=0; i < lightArray.length; i++){
-		var lightID = lightArray[i].id
-		console.log(lightID)
-		api.setLightState(lightID, state.on(), function(err, result) {
-			if (err) throw err;
-			displayResult(result);
-		});
+	// Turn off each light in the light array
+	function turnOffAllLights(){
+		for(var i=0; i < lightArray.length; i++){
+			var lightID = lightArray[i].id
+			api.setLightState(lightID, state.off(), function(err, result) {
+				if (err) throw err;
+				displayResult(result);
+			});
+		}
 	}
-}
+
+	// Turn on each light in the light array
+	function turnOnAllLights(){
+		for(var i=0; i < lightArray.length; i++){
+			var lightID = lightArray[i].id
+			api.setLightState(lightID, state.on(), function(err, result) {
+				if (err) throw err;
+				displayResult(result);
+			});
+		}
+	}
+}// End launchApplication()
