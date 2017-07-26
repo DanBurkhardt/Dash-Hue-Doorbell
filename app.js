@@ -6,10 +6,6 @@ var keys
 // Application Debugging
 var debug = require('debug')('app.js')
 
-// Dash Button Hack
-var dash_button = require('node-dash-button');
-var dash = dash_button('DEVICE MAC HERE', null, 1000, 'all');
-
 // Read keyfile
 fs.readFile(localKeyPath, handle)// Format your keyfile however you want
 
