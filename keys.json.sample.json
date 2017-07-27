@@ -1,0 +1,13 @@
+{
+  "twilio":{
+    "accountSID":"GET FROM TWILIO ACCOUNT",
+    "token":"GET FROM TOKEN",
+    "twilioFromNumber":"GET FROM TWILIO ACCOUNT",
+    "twilioToNumber":"ADD ANY NUMBER HERE"
+  },
+  "hue":{
+    "ipAddress":"GET FROM HUE BRIDGE",
+    "username":"GET FROM HUE BRIDGE"
+  },
+  "dashButtonMAC":"GET MAC ADDRESS FROM DASH INSTRUCTIONS"
+}

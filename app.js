@@ -1,6 +1,6 @@
 // Read keys from local keyfile
 var fs = require('fs')
-var localKeyPath = "../../Desktop/keys.json"
+var localKeyPath = "keys.json"
 var keys
 
 // Application Debugging
@@ -82,8 +82,8 @@ function launchApplication() {
 		var executionTimes = 0
 		var triggered = false
 	
-		// Send a text alert
-		sendSMS()
+		// OPTIONAL
+		sendSMS()// Comment this line out if you do not wish to 
 	
 		// Cron job to dispatch on/off tasks every second
 		var task = cron.schedule('* * * * * *', function(){
@@ -113,8 +113,8 @@ function launchApplication() {
 	function sendSMS(){
 		debug("Sending Twilio sms message.."); 
 		twilioClient.messages.create({ 
-			to: "2677096051", 
-			from: "2156080709", 
+			to: keys.twilio.twilioToNumber, 
+			from: keys.twilio.twilioFromNumber, 
 			body: "Knock Knock! Someone is at the door right now!",   
 		}, function(err, message) { 
 			if(err){

@@ -7,12 +7,16 @@ Video I posted about it to Facebook: https://www.facebook.com/nomdannom/videos/1
 
 ## How to install
 Clone this repo
+
 Run `npm install` in the root of the repo
-Create a file called `keys.json` and put it somewhere you want to access in the application
-Replace the path for the `localKeyPath` variable with wherever you placed this keyfile
+
+Open the file in the root directory called `keys.json.sample`
+
+Change the extension from `.json.sample` to `.json`. 
+
+Note: The default location will be the root of your project. Git will ignore your `keys.json` file when committing according the an exclusion I've added to the `.gitignore`. Once you edit the ext. of the file and customize it, it will be safe from committing in the root of your project directory. 
 
 Follow instructions below for populating the keyfile with your credentials from Hue, Dash and Twilio
-
 
 ## Gettin Amazon Dash Button Info
 Get total control over any Dash Button by following the instructions here: 
